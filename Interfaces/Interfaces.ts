@@ -20,13 +20,21 @@ const whatsAppUserListSchema = new mongoose.Schema({
     status: { type: String, required: true, unique: true },
     img: String
 });
+const channelListSchema = new mongoose.Schema({
+    channel: { type: String, required: true ,unique: true},
+    last_msg: String,
+    timestamp: Number,
+    counter: Object
+});
 
-export type RegisterUser = mongoose.InferSchemaType<typeof userSchema>;
-export type User = mongoose.InferSchemaType<typeof userListSchema>;
-export type WhatsappUser = mongoose.InferSchemaType<typeof whatsAppUserListSchema>;
+export type RegisterUserInterface = mongoose.InferSchemaType<typeof userSchema>;
+export type UserInterface = mongoose.InferSchemaType<typeof userListSchema>;
+export type WhatsappUserInterface = mongoose.InferSchemaType<typeof whatsAppUserListSchema>;
+export type ChannelListInterface = mongoose.InferSchemaType<typeof channelListSchema>;
 
 module.exports = {
-    RegisterUserSchemaModel: mongoose.model<RegisterUser>('User', userSchema),
-    UserSchemaModel: mongoose.model<User>('Users', userListSchema),
-    WhatsAppUserSchemaModel: mongoose.model<WhatsappUser>('Users', userListSchema)
+    RegisterUserSchemaModel: mongoose.model<RegisterUserInterface>('User', userSchema),
+    UserSchemaModel: mongoose.model<UserInterface>('Users', userListSchema),
+    WhatsAppUserSchemaModel: mongoose.model<WhatsappUserInterface>('Users', userListSchema),
+    ChannelListSchemaModel: mongoose.model<ChannelListInterface>('channel', channelListSchema)
 };

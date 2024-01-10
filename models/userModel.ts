@@ -1,7 +1,6 @@
-const { UserSchemaModel } = require("../Interfaces/Interfaces")
+const { UserSchemaModel } = require("../Interfaces/Interfaces");
 import { RegisterUserInterface } from '../Interfaces/Interfaces';
-import { Error as MongooseError } from 'mongoose';
-const chatModel = require ('./chatModel')
+const {ChannelListSchemaModel } = require("../Interfaces/Interfaces");
 interface UserModel {
     user: RegisterUserInterface;
     email: string;
@@ -31,9 +30,7 @@ exports.whatsAppUsers = async ({ country,email }: UserModel) => {
         }, {});
 
         const countryPattern = country && typeof country === 'string'? new RegExp(country, 'i') : /.*/ ;
-
-
-        const channelList = await chatModel.getChatChannel({email:email});
+        let channelList = await ChannelListSchemaModel.find({ channel: { $regex: email, $options: 'i' } });
         const channelEmails = channelList.map((channel:any) => channel.channel.split('_')).flat();
       
         let users = await UserSchemaModel.find(

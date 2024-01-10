@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import connectDB from "./db/db";
 var usersRouter = require('./routes/user');
-var chatRouter = require('./routes/chatChannel');
+var chatRouter = require('./routes/chat');
 var authRouter = require('./routes/auth');
 const cors = require('cors');
 const app: Express = express();

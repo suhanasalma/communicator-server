@@ -1,6 +1,6 @@
 
-import mongoose from 'mongoose';
-const userSchema = new mongoose.Schema({
+import mongoose, { Document, Schema }  from 'mongoose';
+const userSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     status: { type: String, required: true },
@@ -8,19 +8,19 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     img: String
 });
-const userListSchema = new mongoose.Schema({
+const userListSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     img: String
 });
 
 
-const whatsAppUserListSchema = new mongoose.Schema({
+const whatsAppUserListSchema = new Schema({
     name: { type: String, required: true },
     status: { type: String, required: true, unique: true },
     img: String
 });
-const channelListSchema = new mongoose.Schema({
+const channelListSchema = new Schema({
     channel: { type: String, required: true ,unique: true},
     last_msg: String,
     timestamp: Number,

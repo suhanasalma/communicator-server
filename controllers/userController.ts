@@ -3,6 +3,14 @@ const userModel = require('../models/userModel');
 const { UserSchemaModel } = require("../Interfaces/Interfaces")
 const util = require('../util/password');
 
+exports.getUserByEmail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let users = await userModel.users({email:req.query.email})
+        res.json(users);
+    } catch (err) {
+        next(err);
+    }
+};
 exports.users = async (req: Request, res: Response, next: NextFunction) => {
     try {
         let users = await userModel.users()

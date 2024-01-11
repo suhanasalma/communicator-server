@@ -85,3 +85,13 @@ exports.getChatIndexDetailsById = async ({id}:ChatChannelModel) => {
         console.log("err", err);
     }
 };
+
+
+exports.createChatChannel = async (data:any) => {
+    try {
+        let response = await ChannelListSchemaModel.createOne(data);
+        return response
+    } catch (err) {
+        console.log(err);
+    }
+};

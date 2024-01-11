@@ -18,3 +18,11 @@ exports.getChatIndexDetailsById = async (req: Request, res: Response, next: Next
         next(err);
     }
 };
+exports.createChatChannel = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        let response = await chatModel.createChatChannel();
+        res.json(response);
+    } catch (err) {
+        next(err);
+    }
+};

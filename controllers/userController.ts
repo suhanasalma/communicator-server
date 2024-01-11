@@ -1,11 +1,9 @@
 import express, { Request, Response, NextFunction } from "express";
 const userModel = require('../models/userModel');
-const { UserSchemaModel } = require("../Interfaces/Interfaces")
-const util = require('../util/password');
 
 exports.getUserByEmail = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let users = await userModel.users({email:req.query.email})
+        let users = await userModel.getUserByEmail({email:req.params.email})
         res.json(users);
     } catch (err) {
         next(err);

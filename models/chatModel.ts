@@ -1,19 +1,29 @@
 const {ChannelListSchemaModel } = require("../Interfaces/Interfaces")
 import mongoose, { Error as MongooseError } from 'mongoose';
+const userModel = require('./userModel');
 
 interface ChatChannelModel {
     email: string | null | undefined;
     password: string;
     country: string
     chat_index_status:string
+    id:string
 }
+
 
 
 exports.getChatChannelListByEmailAndGroupType = async ({ email ,chat_index_status }: ChatChannelModel) => {
     try {
-      const channelsWithUsers = await ChannelListSchemaModel.aggregate([
+
+        let user = await userModel.getUserByEmail({email})
+        const channelsWithUsers = await ChannelListSchemaModel.aggregate([
         {
-          $match: { channel: { $regex: email, $options: 'i' }, chat_index_status:chat_index_status }
+        //   $match: { channel: { $regex: email, $options: 'i' }, chat_index_status:chat_index_status }
+            $match: {
+                "participants.user_id": { $in: [user._id] },
+                group_type: { $in: ["one-to-one", "group"] },
+                chat_index_status:chat_index_status
+            }
         },
         {
           $unwind: "$participants"
@@ -63,4 +73,15 @@ exports.getChatChannelListByEmailAndGroupType = async ({ email ,chat_index_statu
       console.error("Error:", err);
       throw err; // Rethrow the error for higher-level handling
     }
-  };
+};
+
+
+
+exports.getChatIndexDetailsById = async ({id}:ChatChannelModel) => {
+    try {
+        let chatIndex = await ChannelListSchemaModel.findOne({_id:id},{ channel: 1, name: 1, img: 1, _id:1, group_type:1});
+        return chatIndex;
+    } catch (err) {
+        console.log("err", err);
+    }
+};

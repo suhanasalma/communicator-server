@@ -12,7 +12,7 @@ interface UserModel {
 
 exports.getUserByEmail = async({email}:UserModel)=>{
     try {
-        let user = await UserSchemaModel.find({email:email}, { password: 0 })
+        let user = await UserSchemaModel.findOne({email:email}, { password: 0 })
         return user;
     } catch (error) {
         console.log(error);

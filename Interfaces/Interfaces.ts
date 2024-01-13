@@ -20,11 +20,61 @@ const whatsAppUserListSchema = new Schema({
     status: { type: String, required: true, unique: true },
     img: String
 });
+
+const participantSchema = new mongoose.Schema({
+    user_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    counter: {
+      type: Number,
+      default: 0,
+    },
+  });
+  
 const channelListSchema = new Schema({
     channel: { type: String, required: true ,unique: true},
-    last_msg: String,
-    timestamp: Number,
-    counter: Object
+    name: {
+        type: String,
+        default: '',
+      },
+      img: {
+        type: String,
+        default: '',
+      },
+      timestamp: {
+        type: Number,
+        required: true,
+      },
+      last_msg: {
+        type: String,
+        default: '',
+      },
+      received: {
+        type: Boolean,
+        default: false,
+      },
+      read: {
+        type: Boolean,
+        default: false,
+      },
+      chat_index_status: {
+        type: String,
+        required: true,
+      },
+      admin: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+      },
+      group_type: {
+        type: String,
+        required: true,
+      },
+      created_at: {
+        type: Date,
+        default: null,
+      },
+      participants: [participantSchema],
 });
 
 export type RegisterUserInterface = mongoose.InferSchemaType<typeof userSchema>;

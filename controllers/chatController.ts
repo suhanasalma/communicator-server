@@ -20,8 +20,9 @@ exports.getChatIndexDetailsById = async (req: Request, res: Response, next: Next
 };
 exports.createChatChannel = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let response = await chatModel.createChatChannel();
-        res.json(response);
+        console.log("req.body",req.body);
+        let response = await chatModel.createChatChannel({channelInfo:req.body});
+        res.json(req.body);
     } catch (err) {
         next(err);
     }

@@ -6,11 +6,11 @@ const util = require('../util/password');
 exports.register = async (req: Request, res: Response, next: NextFunction) => {
     try {
         console.log(req.body);
-        let hasPass = await util.passwordEncription(req.body.password)
+        let hassPass = await util.passwordEncription(req.body.password)
         let registerUserInfo = {
             name:req.body.name,
             email:req.body.email,
-            password:hasPass,
+            password:hassPass,
             img:req?.body?.img,
             status:req.body.status,
             country:req.body.country,
@@ -23,6 +23,7 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
 };
 exports.login = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log("login",req.body);
         let response = await authModel.login({email:req.body.email,password:req.body.password});
         res.json(response);
     } catch (err) {

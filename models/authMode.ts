@@ -15,7 +15,7 @@ exports.register = async ({ user }: UserModel) => {
         let saveuser: RegisterUserInterface = await addingUser.save()
         return {
             status: 201, success: true, data: {
-                "email": saveuser.email,
+                "user": saveuser,
             }
         }
     } catch (err) {
@@ -36,12 +36,14 @@ exports.login = async ({ email, password }: UserModel) => {
         if (user) {
             let match = await util.passwordDecription(password, user.password)
             if (match) {
-                return { status: 201, matched: true, message: "password matched" }
+                return { status: 201, success: true, data: {
+                    "user": user,
+                }}
             }
-            return { status: 500, matched: false, message: "password did not matched, kindly provide correct password" }
+            return { status: 500, success: false, error: "password did not matched, kindly provide correct password" }
         }
 
-        return { status: 404, matched: false, message: "user not found" }
+        return { status: 404, success: false, error: "user not found" }
 
     } catch (err) {
         console.log("error", err);

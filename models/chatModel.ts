@@ -10,8 +10,9 @@ interface ChatChannelModel {
     id: string;
     channelInfo: any;
     group_type:string;
-    check_member:string
+    check_member:string;
 }
+
 
 exports.getChatChannelListByEmailAndGroupType = async ({
     email,
@@ -177,8 +178,17 @@ exports.getChatIndexDetailsById = async ({ id }: ChatChannelModel) => {
 exports.createChatChannel = async ({ channelInfo }: ChatChannelModel) => {
     try {
         let response = await ChannelListSchemaModel.create(channelInfo);
-        return response;
+        if(response.group_type === 'group'){
+            response.channel = `channel_group_${response._id}`
+            await response.save();
+        }
+        if(response.group_type === 'announcement'){
+            response.channel = `channel_announcement_${response._id}`
+            await response.save();
+        }
+        return {status:201, success:true, data:response};
     } catch (err) {
-        console.log(err);
+        console.log("createChatChannel",err);
+        return {status:401, success:false, message: err};
     }
 };

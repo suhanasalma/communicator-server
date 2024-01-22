@@ -26,7 +26,7 @@ app.use('/auth', authRouter);
 
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+  res.send("Express + TypeScript Communicator Server is running");
 });
 
 app.listen(port, () => {

@@ -7,7 +7,8 @@ interface ChatChannelModel {
     password: string;
     country: string;
     chat_index_status: string;
-    id: string;
+    user_id: string;
+    channel_id: string;
     channelInfo: any;
     group_type:string;
     check_member:string;
@@ -93,12 +94,17 @@ exports.getChatChannelListByEmailAndGroupType = async ({
 exports.getChatChannel = async ({
     email ,
     chat_index_status ,
-    group_type 
+    group_type ,
+    channel_id
 }: ChatChannelModel) => {
     try {
         let user = null;
         const matchConditions: Record<string, any> = {};
 
+        if(channel_id){
+            user = await userModel.getUserByEmail({ email });
+            matchConditions["participants.user_id"] = { $in: [user._id] };
+        };
         if(email){
             user = await userModel.getUserByEmail({ email });
             matchConditions["participants.user_id"] = { $in: [user._id] };
@@ -163,11 +169,11 @@ exports.getChatChannel = async ({
     }
 };
 
-exports.getChatIndexDetailsById = async ({ id }: ChatChannelModel) => {
+exports.getChatIndexDetailsById = async ({ channel_id }: ChatChannelModel) => {
     try {
         let chatIndex = await ChannelListSchemaModel.findOne(
-            { _id: id },
-            { channel: 1, name: 1, img: 1, _id: 1, group_type: 1 }
+            { _id: channel_id },
+            // { channel: 1, name: 1, img: 1, _id: 1, group_type: 1 }
         );
         return chatIndex;
     } catch (err) {

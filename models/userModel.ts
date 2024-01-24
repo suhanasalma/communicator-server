@@ -19,7 +19,7 @@ exports.getUserByEmail = async({email}:UserModel)=>{
     }
 }
 
-exports.users = async () => {
+exports.getUsers = async () => {
     try {
         let users = await UserSchemaModel.find({}, { password: 0 })
         return users
@@ -28,7 +28,7 @@ exports.users = async () => {
     }
 };
 
-exports.whatsAppUsers = async ({ country,email }: UserModel) => {
+exports.communicatorUsers = async ({ country,email }: UserModel) => {
     try {
         const fieldsToInclude = ["name", "status", "img", "email"];
 

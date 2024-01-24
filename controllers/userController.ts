@@ -9,18 +9,18 @@ exports.getUserByEmail = async (req: Request, res: Response, next: NextFunction)
         next(err);
     }
 };
-exports.users = async (req: Request, res: Response, next: NextFunction) => {
+exports.getUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let users = await userModel.users()
+        let users = await userModel.getUsers()
         res.json(users);
     } catch (err) {
         next(err);
     }
 };
 
-exports.whatsAppUsers = async (req: Request, res: Response, next: NextFunction) => {
+exports.communicatorUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let users = await userModel.whatsAppUsers({country:req.query.country,email:req.query.email});
+        let users = await userModel.communicatorUsers({country:req.query.country,email:req.query.email});
         res.json(users);
     } catch (err) {
         next(err);

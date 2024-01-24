@@ -28,10 +28,9 @@ exports.createChatChannel = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
-exports.getChatChannel = async (req: Request, res: Response, next: NextFunction) => {
+exports.getChatChannels = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("req.query getChatChannel",req.query);
-        let response = await chatModel.getChatChannel({email:req.query.email, chat_index_status:req.query.chat_index_status, group_type:req.query.group_type});
+        let response = await chatModel.getChatChannels({email:req.query.email, chat_index_status:req.query.chat_index_status, group_type:req.query.group_type,channel_id:req.query.channel_id});
         res.json(response);
     } catch (err) {
         next(err);

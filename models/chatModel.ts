@@ -86,12 +86,13 @@ exports.getChatChannelListByEmailAndGroupType = async ({
         ]);
 
         return channelsWithUsers;
+        // return {totalCHannel:channelsWithUsers.length,channels:channelsWithUsers};
     } catch (err) {
         console.error("Error:", err);
         throw err; // Rethrow the error for higher-level handling
     }
 };
-exports.getChatChannel = async ({
+exports.getChatChannels = async ({
     email ,
     chat_index_status ,
     group_type ,
@@ -101,10 +102,13 @@ exports.getChatChannel = async ({
         let user = null;
         const matchConditions: Record<string, any> = {};
 
-        if(channel_id){
-            user = await userModel.getUserByEmail({ email });
-            matchConditions["participants.user_id"] = { $in: [user._id] };
-        };
+        if (channel_id) {
+            if (mongoose.isValidObjectId(channel_id)) {
+                matchConditions["_id"] = new mongoose.Types.ObjectId(channel_id);
+            } else {
+                return ("Invalid channel_id");
+            }
+        }
         if(email){
             user = await userModel.getUserByEmail({ email });
             matchConditions["participants.user_id"] = { $in: [user._id] };

@@ -15,7 +15,7 @@ interface ChatChannelModel {
 }
 
 
-exports.getChatChannelsByEmailAndGroupType = async ({
+exports.getChatChannelsByEmailAndIndexType = async ({
     email,
     chat_index_status,
 }: ChatChannelModel) => {

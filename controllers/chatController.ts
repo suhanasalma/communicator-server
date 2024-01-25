@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from "express";
 const chatModel = require('../models/chatModel');
 
-exports.getChatChannelsByEmailAndGroupType = async (req: Request, res: Response, next: NextFunction) => {
+exports.getChatChannelsByEmailAndIndexType = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("req.query getChatChannelsByEmailAndGroupType",req.query);
-        let users = await chatModel.getChatChannelsByEmailAndGroupType({email:req.query.email, chat_index_status:req.query.chat_index_status});
+        console.log("req.query getChatChannelsByEmailAndIndexType",req.query);
+        let users = await chatModel.getChatChannelsByEmailAndIndexType({email:req.query.email, chat_index_status:req.query.chat_index_status});
         res.json(users);
     } catch (err) {
         next(err);

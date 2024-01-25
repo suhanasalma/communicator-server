@@ -12,7 +12,7 @@ exports.getChatChannelListByEmailAndGroupType = async (req: Request, res: Respon
 };
 exports.getChatIndexDetailsById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let chatIndex = await chatModel.getChatIndexDetailsById({id:req.params.id});
+        let chatIndex = await chatModel.getAllTypeChatChannels({channel_id:req.params.id});
         res.json(chatIndex);
     } catch (err) {
         next(err);
@@ -28,9 +28,9 @@ exports.createChatChannel = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
-exports.getChatChannels = async (req: Request, res: Response, next: NextFunction) => {
+exports.getAllTypeChatChannels = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let response = await chatModel.getChatChannels({email:req.query.email, chat_index_status:req.query.chat_index_status, group_type:req.query.group_type,channel_id:req.query.channel_id});
+        let response = await chatModel.getAllTypeChatChannels({email:req.query.email, chat_index_status:req.query.chat_index_status, group_type:req.query.group_type,channel_id:req.query.channel_id});
         res.json(response);
     } catch (err) {
         next(err);

@@ -93,7 +93,7 @@ exports.getChatChannelListByEmailAndGroupType = async ({
         throw err; // Rethrow the error for higher-level handling
     }
 };
-exports.getChatChannels = async ({
+exports.getAllTypeChatChannels = async ({
     email ,
     chat_index_status ,
     group_type ,
@@ -181,18 +181,6 @@ exports.getChatChannels = async ({
     } catch (err) {
         console.error("Error:", err);
         throw err; // Rethrow the error for higher-level handling
-    }
-};
-
-exports.getChatIndexDetailsById = async ({ channel_id }: ChatChannelModel) => {
-    try {
-        let chatIndex = await ChannelListSchemaModel.findOne(
-            { _id: channel_id },
-            // { channel: 1, name: 1, img: 1, _id: 1, group_type: 1 }
-        );
-        return chatIndex;
-    } catch (err) {
-        console.log("err", err);
     }
 };
 

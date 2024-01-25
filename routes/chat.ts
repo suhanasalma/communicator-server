@@ -4,7 +4,7 @@ const chatController = require("../controllers/chatController");
 var router = express.Router();
 
 router.get('/',chatController.getAllTypeChatChannels);
-router.get('/channels',chatController.getChatChannelListByEmailAndGroupType);
+router.get('/channels',chatController.getChatChannelsByEmailAndGroupType);
 router.get('/:id',chatController.getChatIndexDetailsById);
 router.post('/',chatController.createChatChannel);
 

@@ -59,6 +59,7 @@ exports.getChatChannelListByEmailAndGroupType = async ({
             {
                 $group: {
                     _id: "$_id",
+                    background:{ $first: "$background" },
                     channel: { $first: "$channel" },
                     last_msg: { $first: "$last_msg" },
                     timestamp: { $first: "$timestamp" },
@@ -148,13 +149,23 @@ exports.getChatChannels = async ({
             {
                 $group: {
                     _id: "$_id",
+                    background:{ $first: "$background" },
                     channel: { $first: "$channel" },
+                    last_msg: { $first: "$last_msg" },
+                    timestamp: { $first: "$timestamp" },
                     created_at: { $first: "$created_at" },
                     chat_index_status: { $first: "$chat_index_status" },
+                    msg_type: { $first: "$msg_type" },
                     group_type: { $first: "$group_type" },
+                    read: { $first: "$read" },
+                    received: { $first: "$received" },
+                    img: { $first: "$img" },
+                    name: { $first: "$name" },
+                    admin: { $first: "$admin" },
                     participants: {
                         $push: {
                             user_id: "$participants.user_id",
+                            counter: "$participants.counter",
                             status: "$user.status",
                             _id: "$user._id",
                             name: "$user.name",

@@ -37,44 +37,48 @@ const channelListSchema = new Schema({
     name: {
         type: String,
         default: '',
-      },
-      img: {
+    },
+    background: {
         type: String,
         default: '',
-      },
-      timestamp: {
+    },
+    img: {
+        type: String,
+        default: '',
+    },
+    timestamp: {
         type: Number,
         required: true,
-      },
-      last_msg: {
+    },
+    last_msg: {
         type: String,
         default: '',
-      },
-      received: {
+    },
+    received: {
         type: Boolean,
         default: false,
-      },
-      read: {
+    },
+    read: {
         type: Boolean,
         default: false,
-      },
-      chat_index_status: {
+    },
+    chat_index_status: {
         type: String,
         required: true,
-      },
-      admin: {
+    },
+    admin: {
         type: mongoose.Schema.Types.ObjectId,
         default: null,
-      },
-      group_type: {
+    },
+    group_type: {
         type: String,
         required: true,
-      },
-      created_at: {
+    },
+    created_at: {
         type: Date,
         default: null,
-      },
-      participants: [participantSchema],
+    },
+    participants: [participantSchema],
 });
 
 export type RegisterUserInterface = mongoose.InferSchemaType<typeof userSchema>;

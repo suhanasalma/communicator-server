@@ -75,7 +75,7 @@ const channelListSchema = new Schema({
         required: true,
     },
     created_at: {
-        type: Date,
+        type: Number,
         default: null,
     },
     participants: [participantSchema],

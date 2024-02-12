@@ -36,7 +36,8 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                                     group_type: { $in: ["one-to-one", "group",] },
                                    ...query,
                                 },
-                                { admin: user._id, group_type: "announcement" , ...query,},
+                                // { admin: user._id, group_type: "announcement" , ...query,},
+                                { "participants": { "$elemMatch": { "user_id": user._id,  "admin": true } }, group_type: "announcement" , ...query, },
                             ],
                         },
                     ],
@@ -125,6 +126,8 @@ exports.getAllTypeChatChannels = async ({
         if ( chat_index_status ) {
             matchConditions.chat_index_status = chat_index_status;
         };
+
+        console.log("matchConditions",matchConditions);
 
 
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([

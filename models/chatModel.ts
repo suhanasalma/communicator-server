@@ -77,6 +77,7 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                         $push: {
                             user_id: "$participants.user_id",
                             counter: "$participants.counter",
+                            admin:"$participants.counter",
                             _id: "$user._id",
                             name: "$user.name",
                             email: "$user.email",
@@ -127,8 +128,6 @@ exports.getAllTypeChatChannels = async ({
             matchConditions.chat_index_status = chat_index_status;
         };
 
-        console.log("matchConditions",matchConditions);
-
 
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([
             {
@@ -169,6 +168,7 @@ exports.getAllTypeChatChannels = async ({
                         $push: {
                             user_id: "$participants.user_id",
                             counter: "$participants.counter",
+                            admin:"$participants.counter",
                             status: "$user.status",
                             _id: "$user._id",
                             name: "$user.name",

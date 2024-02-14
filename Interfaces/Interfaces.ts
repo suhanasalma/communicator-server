@@ -1,5 +1,5 @@
 
-import mongoose, { Document, Schema }  from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 const userSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -7,7 +7,7 @@ const userSchema = new Schema({
     country: { type: String, required: true },
     password: { type: String, required: true },
     img: String
-});
+}, { timestamps: true });
 const userListSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -23,17 +23,43 @@ const whatsAppUserListSchema = new Schema({
 
 const participantSchema = new mongoose.Schema({
     user_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
     },
     counter: {
-      type: Number,
-      default: 0,
+        type: Number,
+        default: 0,
     },
-  });
-  
+    admin: {
+        type: Boolean,
+        default: false,
+    },
+    joined_at: {
+        type: Date,
+        default: Date,
+    },
+});
+const groupPermissionsSchema = new mongoose.Schema({
+    approve_new_member: {
+        type: Boolean,
+        default: false,
+    },
+    add_other_member: {
+        type: Boolean,
+        default: false,
+    },
+    send_message: {
+        type: Boolean,
+        default: true,
+    },
+    edit_group_setting: {
+        type: Boolean,
+        default: false,
+    },
+});
+
 const channelListSchema = new Schema({
-    channel: { type: String, required: true ,unique: true},
+    channel: { type: String, required: true, unique: true },
     name: {
         type: String,
         default: '',
@@ -42,12 +68,17 @@ const channelListSchema = new Schema({
         type: String,
         default: '',
     },
+    gradient: {
+        type: Number,
+        default: 0,
+    },
     img: {
         type: String,
         default: '',
     },
     timestamp: {
-        type: Number,
+        type: Date,
+        default: Date,
         required: true,
     },
     last_msg: {
@@ -74,12 +105,9 @@ const channelListSchema = new Schema({
         type: String,
         required: true,
     },
-    created_at: {
-        type: Number,
-        default: null,
-    },
+    group_permissions: groupPermissionsSchema,
     participants: [participantSchema],
-});
+}, { timestamps: true });
 
 export type RegisterUserInterface = mongoose.InferSchemaType<typeof userSchema>;
 export type UserInterface = mongoose.InferSchemaType<typeof userListSchema>;

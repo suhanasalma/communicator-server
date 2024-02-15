@@ -93,6 +93,14 @@ const channelListSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    msg_delete_status: {
+        type: Number,
+        default: 0,
+    },
+    msg_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+    },
     chat_index_status: {
         type: String,
         required: true,

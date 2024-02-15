@@ -12,7 +12,7 @@ exports.getChatChannelsByEmailAndIndexType = async (req: Request, res: Response,
 };
 exports.getChatIndexDetailsById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let chatIndex = await chatModel.getAllTypeChatChannels({channel_id:req.params.id});
+        let chatIndex = await chatModel.getAllTypeChatChannels({channel_name:req.params.id});
         res.json(chatIndex.channels[0]);
     } catch (err) {
         next(err);

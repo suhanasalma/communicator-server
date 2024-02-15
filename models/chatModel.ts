@@ -9,6 +9,7 @@ interface ChatChannelModel {
     chat_index_status: string;
     user_id: string;
     channel_id: string;
+    channel_name: string;
     channelInfo: any;
     group_type: string;
     check_member: string;
@@ -64,6 +65,8 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                     gradient: { $first: "$gradient" },
                     channel: { $first: "$channel" },
                     last_msg: { $first: "$last_msg" },
+                    msg_delete_status: { $first: "$msg_delete_status" },
+                    msg_id: { $first: "$msg_id" },
                     timestamp: { $first: "$timestamp" },
                     chat_index_status: { $first: "$chat_index_status" },
                     msg_type: { $first: "$msg_type" },
@@ -103,7 +106,8 @@ exports.getAllTypeChatChannels = async ({
     email,
     chat_index_status,
     group_type,
-    channel_id
+    channel_id,
+    channel_name
 }: ChatChannelModel) => {
     try {
         let user = null;
@@ -115,6 +119,9 @@ exports.getAllTypeChatChannels = async ({
             } else {
                 return ("Invalid channel_id");
             }
+        }
+        if (channel_name) {
+            matchConditions['channel'] = channel_name;
         }
         if (email) {
             user = await userModel.getUserByEmail({ email });
@@ -159,6 +166,8 @@ exports.getAllTypeChatChannels = async ({
                     gradient: { $first: "$gradient" },
                     channel: { $first: "$channel" },
                     last_msg: { $first: "$last_msg" },
+                    msg_delete_status: { $first: "$msg_delete_status" },
+                    msg_id: { $first: "$msg_id" },
                     timestamp: { $first: "$timestamp" },
                     createdAt: { $first: "$createdAt" },
                     updatedAt: { $first: "$updatedAt" },
@@ -197,11 +206,6 @@ exports.getAllTypeChatChannels = async ({
 
 exports.createChatChannel = async ({ channelInfo }: ChatChannelModel) => {
     try {
-        // const bdTimestamp = moment().tz('Asia/Dhaka').toDate();
-        // channelInfo.timestamp = bdTimestamp;
-        // channelInfo.created_at = bdTimestamp;
-        // channelInfo.updated_at = bdTimestamp;
-        channelInfo.timestamp = new Date;
         let response = await ChannelListSchemaModel.create(channelInfo);
         if (response.group_type === 'group') {
             response.channel = `channel_group_${response._id}`

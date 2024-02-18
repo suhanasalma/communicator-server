@@ -24,7 +24,18 @@ exports.getMessages = async ({ channel_name }: MessageModel) => {
         // let response = await MessageSchemaModel.create(channel_name);
         const messages = await MessageSchemaModel.aggregate([
             {
-                $match: {channel:channel_name},
+                $match: { channel: channel_name },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "sender",
+                    foreignField: "_id",
+                    as: "senderInfo",
+                },
+            },
+            {
+                $unwind: "$senderInfo",
             },
             {
                 $unwind: "$receivers",
@@ -34,12 +45,11 @@ exports.getMessages = async ({ channel_name }: MessageModel) => {
                     from: "users",
                     localField: "receivers._id",
                     foreignField: "_id",
-                    as: "user",
+                    as: "receiverInfo",
                 },
             },
-      
             {
-                $unwind: "$user",
+                $unwind: "$receiverInfo",
             },
             {
                 $group: {
@@ -49,6 +59,7 @@ exports.getMessages = async ({ channel_name }: MessageModel) => {
                     msg_type: { $first: "$msg_type" },
                     is_message_deleted: { $first: "$is_message_deleted" },
                     sender: { $first: "$sender" },
+                    senderInfo: { $first: "$senderInfo" },
                     medias: { $first: "$medias" },
                     createdAt: { $first: "$createdAt" },
                     updatedAt: { $first: "$updatedAt" },
@@ -58,10 +69,10 @@ exports.getMessages = async ({ channel_name }: MessageModel) => {
                             read_at: "$receivers.read_at",
                             delivered_at: "$receivers.delivered_at",
                             reaction: "$receivers.reaction",
-                            _id: "$user._id",
-                            name: "$user.name",
-                            email: "$user.email",
-                            img: "$user.img",
+                            _id: "$receiverInfo._id",
+                            name: "$receiverInfo.name",
+                            email: "$receiverInfo.email",
+                            img: "$receiverInfo.img",
                         },
                     },
                 },

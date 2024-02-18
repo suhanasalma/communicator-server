@@ -63,6 +63,8 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                     _id: "$_id",
                     background: { $first: "$background" },
                     gradient: { $first: "$gradient" },
+                    personalized_background: { $first: "$personalized_background" },
+                    personalized_gradient: { $first: "$personalized_gradient" },
                     channel: { $first: "$channel" },
                     last_msg: { $first: "$last_msg" },
                     msg_delete_status: { $first: "$msg_delete_status" },
@@ -83,7 +85,7 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                         $push: {
                             user_id: "$participants.user_id",
                             counter: "$participants.counter",
-                            admin: "$participants.counter",
+                            admin: "$participants.admin",
                             _id: "$user._id",
                             name: "$user.name",
                             email: "$user.email",
@@ -139,6 +141,8 @@ exports.getAllTypeChatChannels = async ({
             matchConditions.chat_index_status = chat_index_status;
         };
 
+        // console.log("channel_name",channel_name);
+
 
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([
             {
@@ -164,6 +168,8 @@ exports.getAllTypeChatChannels = async ({
                     _id: "$_id",
                     background: { $first: "$background" },
                     gradient: { $first: "$gradient" },
+                    personalized_background: { $first: "$personalized_background" },
+                    personalized_gradient: { $first: "$personalized_gradient" },
                     channel: { $first: "$channel" },
                     last_msg: { $first: "$last_msg" },
                     msg_delete_status: { $first: "$msg_delete_status" },
@@ -184,7 +190,7 @@ exports.getAllTypeChatChannels = async ({
                         $push: {
                             user_id: "$participants.user_id",
                             counter: "$participants.counter",
-                            admin: "$participants.counter",
+                            admin: "$participants.admin",
                             status: "$user.status",
                             _id: "$user._id",
                             name: "$user.name",
@@ -196,6 +202,8 @@ exports.getAllTypeChatChannels = async ({
                 },
             },
         ]);
+
+        // console.log("channelsWithUsers",channelsWithUsers);
 
         return { totalCHannel: channelsWithUsers.length, channels: channelsWithUsers };
     } catch (err) {

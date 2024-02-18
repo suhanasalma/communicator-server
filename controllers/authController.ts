@@ -5,7 +5,7 @@ const util = require('../util/password');
 
 exports.register = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body);
+        // console.log(req.body);
         let hassPass = await util.passwordEncription(req.body.password)
         let registerUserInfo = {
             name:req.body.name,
@@ -23,7 +23,7 @@ exports.register = async (req: Request, res: Response, next: NextFunction) => {
 };
 exports.login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("login",req.body);
+        // console.log("login",req.body);
         let response = await authModel.login({email:req.body.email,password:req.body.password});
         res.json(response);
     } catch (err) {

@@ -66,11 +66,19 @@ const channelListSchema = new Schema({
     },
     background: {
         type: String,
-        default: '',
+        default: 'https://i.ibb.co/NCpTKsm/5.jpg',
     },
     gradient: {
         type: Number,
-        default: 0,
+        default: 0.1,
+    },
+    personalized_background: {
+        type: String,
+        default: '',
+    },
+    personalized_gradient: {
+        type: Number,
+        default: 0.1,
     },
     img: {
         type: String,
@@ -117,14 +125,40 @@ const channelListSchema = new Schema({
     participants: [participantSchema],
 }, { timestamps: true });
 
+const mediasSchema = new Schema({
+    type: { type: String,default: '' },
+    file_name: { type: String,  default: '' },
+    url: { type: String, default: 0, },
+    
+});
+const receiversSchema = new Schema({
+    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    read_at: { type: Date, default: Date  },
+    delivered_at: { type: Date, default: Date },
+    reaction: { type: String, default: '', },
+    
+});
+
+const messageSchema = new Schema({
+    channel: { type: String, required: true },
+    message: { type: String, required: true, default: '' },
+    msg_type: { type: String, required: true, default: '' },
+    is_message_deleted: { type: Number, required: true, default: 0, },
+    sender: { type: mongoose.Schema.Types.ObjectId, required: true },
+    receivers:[receiversSchema],
+    medias:[mediasSchema]
+}, { timestamps: true });
+
 export type RegisterUserInterface = mongoose.InferSchemaType<typeof userSchema>;
 export type UserInterface = mongoose.InferSchemaType<typeof userListSchema>;
 export type WhatsappUserInterface = mongoose.InferSchemaType<typeof whatsAppUserListSchema>;
 export type ChannelListInterface = mongoose.InferSchemaType<typeof channelListSchema>;
+export type MessageInterface = mongoose.InferSchemaType<typeof messageSchema>;
 
 module.exports = {
     RegisterUserSchemaModel: mongoose.model<RegisterUserInterface>('User', userSchema),
     UserSchemaModel: mongoose.model<UserInterface>('Users', userListSchema),
     WhatsAppUserSchemaModel: mongoose.model<WhatsappUserInterface>('Users', userListSchema),
-    ChannelListSchemaModel: mongoose.model<ChannelListInterface>('channel', channelListSchema)
+    ChannelListSchemaModel: mongoose.model<ChannelListInterface>('channel', channelListSchema),
+    MessageSchemaModel: mongoose.model<MessageInterface>('message', messageSchema)
 };

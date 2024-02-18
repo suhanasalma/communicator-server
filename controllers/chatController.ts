@@ -3,7 +3,7 @@ const chatModel = require('../models/chatModel');
 
 exports.getChatChannelsByEmailAndIndexType = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("req.query getChatChannelsByEmailAndIndexType",req.query);
+        // console.log("req.query getChatChannelsByEmailAndIndexType",req.query);
         let users = await chatModel.getChatChannelsByEmailAndIndexType({email:req.query.email, chat_index_status:req.query.chat_index_status});
         res.json(users);
     } catch (err) {
@@ -20,7 +20,7 @@ exports.getChatIndexDetailsById = async (req: Request, res: Response, next: Next
 };
 exports.createChatChannel = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("req.body",req.body);
+        // console.log("req.body",req.body);
         let response = await chatModel.createChatChannel({channelInfo:req.body});
         res.json(response);
     } catch (err) {

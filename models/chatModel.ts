@@ -13,6 +13,7 @@ interface ChatChannelModel {
     channelInfo: any;
     group_type: string;
     check_member: string;
+    participants: []
 }
 
 
@@ -94,6 +95,9 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                         },
                     },
                 },
+            },
+            {
+                $sort: { timestamp: -1 } // Sort by createdAt in ASC order
             },
         ]);
 
@@ -201,6 +205,9 @@ exports.getAllTypeChatChannels = async ({
                     },
                 },
             },
+            {
+                $sort: { timestamp: -1 } // Sort by createdAt in ASC order
+            },
         ]);
 
         // console.log("channelsWithUsers",channelsWithUsers);
@@ -211,6 +218,8 @@ exports.getAllTypeChatChannels = async ({
         throw err; // Rethrow the error for higher-level handling
     }
 };
+
+
 
 exports.createChatChannel = async ({ channelInfo }: ChatChannelModel) => {
     try {
@@ -229,3 +238,31 @@ exports.createChatChannel = async ({ channelInfo }: ChatChannelModel) => {
         return { status: 401, success: false, message: err };
     }
 };
+
+
+exports.getCommonChannelAndGroups = async ({ email, participants }: ChatChannelModel) => {
+
+    let response = await Promise.all(participants.map(async (participant)=>{
+        let channel = await ChannelListSchemaModel.findOne({$or: [
+            { channel: `chat_${participant}_${email}` },
+            { channel: `chat_${email}_${participant}` }
+        ]});
+
+        return channel
+
+    }));
+
+    return response;
+
+    // let response = await ChannelListSchemaModel.aggregate([
+    //     {
+    //         $match: {
+    //             $or: [
+    //                 { channel: `chat_${participants}_${email}` },
+    //                 { channel: `chat_${email}_${participants}` }
+    //             ]
+    //         },
+
+    //     },
+    // ])
+}

@@ -95,7 +95,7 @@ const channelListSchema = new Schema({
     },
     received: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     read: {
         type: Boolean,
@@ -135,16 +135,23 @@ const receiversSchema = new Schema({
     _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     read_at: { type: Date, default: Date  },
     delivered_at: { type: Date, default: Date },
+    email: { type: String, default: '', },
     reaction: { type: String, default: '', },
     
 });
 
+const msgSenderSchema = new Schema({
+    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    email: { type: String, default: '', required: true},
+})
+
 const messageSchema = new Schema({
     channel: { type: String, required: true },
+    channel_type: { type: String, required: true },
     message: { type: String, required: true, default: '' },
     msg_type: { type: String, required: true, default: '' },
     is_message_deleted: { type: Number, required: true, default: 0, },
-    sender: { type: mongoose.Schema.Types.ObjectId, required: true },
+    sender: msgSenderSchema,
     receivers:[receiversSchema],
     medias:[mediasSchema]
 }, { timestamps: true });

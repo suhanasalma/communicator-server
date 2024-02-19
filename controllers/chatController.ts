@@ -36,3 +36,10 @@ exports.getAllTypeChatChannels = async (req: Request, res: Response, next: NextF
         next(err);
     }
 };
+
+
+exports.getCommonChannelAndGroups = async (req: Request, res: Response, next: NextFunction) =>{
+    let response = await chatModel.getCommonChannelAndGroups({email:req.body.email,participants:req.body.participants});
+    res.json(response)
+    
+}

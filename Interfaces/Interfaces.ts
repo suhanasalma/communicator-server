@@ -6,7 +6,7 @@ const userSchema = new Schema({
     status: { type: String, required: true },
     country: { type: String, required: true },
     password: { type: String, required: true },
-    img: String
+    img: { type: String, default: '' },
 }, { timestamps: true });
 const userListSchema = new Schema({
     name: { type: String, required: true },

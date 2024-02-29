@@ -40,6 +40,15 @@ exports.getAllTypeChatChannels = async (req: Request, res: Response, next: NextF
 
 exports.getCommonChannelAndGroups = async (req: Request, res: Response, next: NextFunction) =>{
     let response = await chatModel.getCommonChannelAndGroups({email:req.body.email,participants:req.body.participants});
-    res.json(response)
-    
-}
+    res.json(response); 
+};
+
+exports.searchChatChannel = async (req: Request, res: Response, next: NextFunction) =>{
+    let response = await chatModel.searchChatChannel({name:req.query.name});
+    res.json(response); 
+};
+exports.filterChatChannel = async (req: Request, res: Response, next: NextFunction) =>{
+    console.log("filter",{filter:req.query.filter});
+    let response = await chatModel.filterChatChannel({filter:req.query.filter});
+    res.json(response); 
+};

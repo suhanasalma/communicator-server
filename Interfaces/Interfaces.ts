@@ -121,6 +121,10 @@ const channelListSchema = new Schema({
         type: String,
         required: true,
     },
+    participant_name:{
+        type: Array,
+        default: [],
+    },
     group_permissions: groupPermissionsSchema,
     participants: [participantSchema],
 }, { timestamps: true });

@@ -7,6 +7,7 @@ interface UserModel {
     password: string;
     country: string
     Comingemail:string
+    name:string
 }
 
 
@@ -28,8 +29,10 @@ exports.getUsers = async () => {
     }
 };
 
-exports.communicatorUsers = async ({ country,email }: UserModel) => {
+exports.communicatorUsers = async ({ country, email, name }: UserModel) => {
     try {
+        let query;
+
         const fieldsToInclude = ["name", "status", "img", "email"];
 
         const projection: { [key: string]: number } = fieldsToInclude.reduce((acc, field) => {
@@ -42,15 +45,28 @@ exports.communicatorUsers = async ({ country,email }: UserModel) => {
         const countryPattern = country && typeof country === 'string'? new RegExp(country, 'i') : /.*/ ;
         let channelList = await ChannelListSchemaModel.find({ channel: { $regex: email, $options: 'i' } });
         const channelEmails = channelList.map((channel:any) => channel.channel.split('_')).flat();
-      
-        let users = await UserSchemaModel.find(
-            {
+
+        if(name){
+            query = {
+                country: countryPattern,
+                name:{ $regex: name, $options: 'i' },
+                $and: [
+                    { email: { $nin: email } },
+                    { email: { $nin: channelEmails } }
+                ],
+            }
+        }else{
+            query = {
                 country: countryPattern,
                 $and: [
                     { email: { $nin: email } },
                     { email: { $nin: channelEmails } }
                 ],
-            },
+            }
+        }
+      
+        let users = await UserSchemaModel.find(
+            query,
             projection
         );
         return users;

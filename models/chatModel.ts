@@ -5,6 +5,7 @@ const moment = require('moment-timezone');
 interface ChatChannelModel {
     email: string | null | undefined;
     name: string | null | undefined;
+    searchTextName: string | null | undefined;
     password: string;
     country: string;
     chat_index_status: string;
@@ -18,16 +19,30 @@ interface ChatChannelModel {
     participants: []
 };
 
+
+//get all channel with announcement and all but only for announcement admin
 exports.getChatChannelsByEmailAndIndexType = async ({
     email,
     chat_index_status,
+    searchTextName,
+    filter
 }: ChatChannelModel) => {
     try {
         let user = await userModel.getUserByEmail({ email });
         let query: Record<string, any> = {}
         if (chat_index_status) {
             query.chat_index_status = chat_index_status
-        }
+        };
+        if (searchTextName) {
+            query.participant_name = { $elemMatch: { $regex: searchTextName, $options: 'i' } }
+        };
+        if (filter && filter !== "unread") {
+            query.group_type = filter
+        };
+        if (filter && filter === "unread") {
+            query.read = false
+        };
+
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([
             {
                 $match: {
@@ -83,6 +98,7 @@ exports.getChatChannelsByEmailAndIndexType = async ({
                     updatedAt: { $first: "$updatedAt" },
                     group_type: { $first: "$group_type" },
                     group_permissions: { $first: "$group_permissions" },
+                    participant_name: { $first: "$participant_name" },
                     participants: {
                         $push: {
                             user_id: "$participants.user_id",
@@ -110,12 +126,14 @@ exports.getChatChannelsByEmailAndIndexType = async ({
     }
 };
 
+//get all type channel even if they are not the creator
 exports.getAllTypeChatChannels = async ({
     email,
     chat_index_status,
     group_type,
     channel_id,
-    channel_name
+    channel_name,
+    searchTextName,
 }: ChatChannelModel) => {
     try {
         let user = null;
@@ -147,7 +165,9 @@ exports.getAllTypeChatChannels = async ({
             matchConditions.chat_index_status = chat_index_status;
         };
 
-        // console.log("channel_name",channel_name);
+        if (searchTextName) {
+            matchConditions.participant_name = { $elemMatch: { $regex: searchTextName, $options: 'i' } };
+        }
 
 
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([
@@ -192,6 +212,7 @@ exports.getAllTypeChatChannels = async ({
                     name: { $first: "$name" },
                     admin: { $first: "$admin" },
                     group_permissions: { $first: "$group_permissions" },
+                    participant_name: { $first: "$participant_name" },
                     participants: {
                         $push: {
                             user_id: "$participants.user_id",
@@ -211,8 +232,6 @@ exports.getAllTypeChatChannels = async ({
                 $sort: { timestamp: -1 } // Sort by createdAt in ASC order
             },
         ]);
-
-        // console.log("channelsWithUsers",channelsWithUsers);
 
         return { totalCHannel: channelsWithUsers.length, channels: channelsWithUsers };
     } catch (err) {
@@ -255,151 +274,4 @@ exports.getCommonChannelAndGroups = async ({ email, participants }: ChatChannelM
 
     return response;
 }
-
-exports.searchChatChannel = async ({ name }: ChatChannelModel) => {
-
-    if (!name || name.trim() === '') {
-        return { total: 0, results: [] };
-    };
-
-    let response = await ChannelListSchemaModel.aggregate([
-        {
-            $match: { participant_name: { $elemMatch: { $regex: name, $options: 'i' } } }
-
-        },
-        {
-            $unwind: "$participants"
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "participants.user_id",
-                foreignField: "_id",
-                as: "participantData"
-            }
-        },
-        {
-            $unwind: "$participantData"
-        },
-        {
-            $group: {
-                _id: "$_id",
-                background: { $first: "$background" },
-                gradient: { $first: "$gradient" },
-                personalized_background: { $first: "$personalized_background" },
-                personalized_gradient: { $first: "$personalized_gradient" },
-                channel: { $first: "$channel" },
-                last_msg: { $first: "$last_msg" },
-                msg_delete_status: { $first: "$msg_delete_status" },
-                msg_id: { $first: "$msg_id" },
-                timestamp: { $first: "$timestamp" },
-                createdAt: { $first: "$createdAt" },
-                updatedAt: { $first: "$updatedAt" },
-                chat_index_status: { $first: "$chat_index_status" },
-                msg_type: { $first: "$msg_type" },
-                group_type: { $first: "$group_type" },
-                read: { $first: "$read" },
-                received: { $first: "$received" },
-                img: { $first: "$img" },
-                name: { $first: "$name" },
-                admin: { $first: "$admin" },
-                group_permissions: { $first: "$group_permissions" },
-                participants: {
-                    $push: {
-                        user_id: "$participants.user_id",
-                        counter: "$participants.counter",
-                        admin: "$participants.admin",
-                        status: "$participantData.status",
-                        _id: "$participantData._id",
-                        name: "$participantData.name",
-                        email: "$participantData.email",
-                        img: "$participantData.img",
-                        joined_at: "$participants.joined_at",
-                    }
-                }
-            }
-        },
-        {
-            $sort: { timestamp: -1 }
-        },
-    ]);
-
-    return { total: response.length, results: response };
-};
-exports.filterChatChannel = async ({ filter }: ChatChannelModel) => {
-
-    if (!filter || filter.trim() === '') {
-        return { total: 0, results: [] };
-    };
-
-    let matchCondition: { [key: string]: any } = { group_type: filter }; 
-
-    if (filter === "unread") {
-        matchCondition = { read: false } as { [key: string]: any };
-    }
-
-    let response = await ChannelListSchemaModel.aggregate([
-        {
-            $match: matchCondition,
-
-        },
-        {
-            $unwind: "$participants"
-        },
-        {
-            $lookup: {
-                from: "users",
-                localField: "participants.user_id",
-                foreignField: "_id",
-                as: "participantData"
-            }
-        },
-        {
-            $unwind: "$participantData"
-        },
-        {
-            $group: {
-                _id: "$_id",
-                background: { $first: "$background" },
-                gradient: { $first: "$gradient" },
-                personalized_background: { $first: "$personalized_background" },
-                personalized_gradient: { $first: "$personalized_gradient" },
-                channel: { $first: "$channel" },
-                last_msg: { $first: "$last_msg" },
-                msg_delete_status: { $first: "$msg_delete_status" },
-                msg_id: { $first: "$msg_id" },
-                timestamp: { $first: "$timestamp" },
-                createdAt: { $first: "$createdAt" },
-                updatedAt: { $first: "$updatedAt" },
-                chat_index_status: { $first: "$chat_index_status" },
-                msg_type: { $first: "$msg_type" },
-                group_type: { $first: "$group_type" },
-                read: { $first: "$read" },
-                received: { $first: "$received" },
-                img: { $first: "$img" },
-                name: { $first: "$name" },
-                admin: { $first: "$admin" },
-                group_permissions: { $first: "$group_permissions" },
-                participants: {
-                    $push: {
-                        user_id: "$participants.user_id",
-                        counter: "$participants.counter",
-                        admin: "$participants.admin",
-                        status: "$participantData.status",
-                        _id: "$participantData._id",
-                        name: "$participantData.name",
-                        email: "$participantData.email",
-                        img: "$participantData.img",
-                        joined_at: "$participants.joined_at",
-                    }
-                }
-            }
-        },
-        {
-            $sort: { timestamp: -1 }
-        },
-    ]);
-
-    return { total: response.length, results: response };
-};
 

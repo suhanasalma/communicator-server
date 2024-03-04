@@ -3,8 +3,7 @@ const chatModel = require('../models/chatModel');
 
 exports.getChatChannelsByEmailAndIndexType = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // console.log("req.query getChatChannelsByEmailAndIndexType",req.query);
-        let users = await chatModel.getChatChannelsByEmailAndIndexType({email:req.query.email, chat_index_status:req.query.chat_index_status});
+        let users = await chatModel.getChatChannelsByEmailAndIndexType({email:req.query.email, chat_index_status:req.query.chat_index_status,searchTextName:req.query.searchTextName,filter:req.query.filter});
         res.json(users);
     } catch (err) {
         next(err);
@@ -30,7 +29,7 @@ exports.createChatChannel = async (req: Request, res: Response, next: NextFuncti
 
 exports.getAllTypeChatChannels = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let response = await chatModel.getAllTypeChatChannels({email:req.query.email, chat_index_status:req.query.chat_index_status, group_type:req.query.group_type,channel_id:req.query.channel_id});
+        let response = await chatModel.getAllTypeChatChannels({email:req.query.email, chat_index_status:req.query.chat_index_status, group_type:req.query.group_type,channel_id:req.query.channel_id,searchTextName:req.query.searchTextName});
         res.json(response);
     } catch (err) {
         next(err);
@@ -40,15 +39,5 @@ exports.getAllTypeChatChannels = async (req: Request, res: Response, next: NextF
 
 exports.getCommonChannelAndGroups = async (req: Request, res: Response, next: NextFunction) =>{
     let response = await chatModel.getCommonChannelAndGroups({email:req.body.email,participants:req.body.participants});
-    res.json(response); 
-};
-
-exports.searchChatChannel = async (req: Request, res: Response, next: NextFunction) =>{
-    let response = await chatModel.searchChatChannel({name:req.query.name});
-    res.json(response); 
-};
-exports.filterChatChannel = async (req: Request, res: Response, next: NextFunction) =>{
-    console.log("filter",{filter:req.query.filter});
-    let response = await chatModel.filterChatChannel({filter:req.query.filter});
     res.json(response); 
 };

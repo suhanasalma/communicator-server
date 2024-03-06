@@ -1,6 +1,7 @@
 const { ChannelListSchemaModel } = require("../Interfaces/Interfaces");
 import mongoose, { Error as MongooseError } from "mongoose";
 const userModel = require("./userModel");
+const common = require("../common/common");
 const moment = require('moment-timezone');
 interface ChatChannelModel {
     email: string | null | undefined;
@@ -25,41 +26,61 @@ exports.getChatChannelsByEmailAndIndexType = async ({
     email,
     chat_index_status,
     searchTextName,
-    filter
+    filter,
+    group_type
 }: ChatChannelModel) => {
     try {
+
+        if (common.isEmpty(email)) return false;
         let user = await userModel.getUserByEmail({ email });
         let query: Record<string, any> = {}
-        if (chat_index_status) {
+        let matchCondition: Record<string, any> = {}
+        if (!common.isEmpty(chat_index_status) && chat_index_status !== "undefined") {
             query.chat_index_status = chat_index_status
         };
-        if (searchTextName) {
+
+        if (!common.isEmpty(searchTextName) && searchTextName !== "undefined") {
             query.participant_name = { $elemMatch: { $regex: searchTextName, $options: 'i' } }
         };
-        if (filter && filter !== "unread") {
+
+        if (!common.isEmpty(filter) && filter !== "undefined" && filter !== "unread") {
             query.group_type = filter
         };
-        if (filter && filter === "unread") {
+        if (!common.isEmpty(filter) && filter !== "undefined" && filter === "unread") {
             query.read = false
         };
+        if (common.isEmpty(group_type) ) {
+            matchCondition = {
+                $and: [
+                    {
+                        $or: [
+                            {
+                                "participants.user_id": { $in: [user._id] },
+                                group_type: { $in: ["one-to-one", "group",] },
+                                ...query,
+                            },
+                            // { admin: user._id, group_type: "announcement" , ...query,},
+                            { "participants": { "$elemMatch": { "user_id": user._id, "admin": true } }, group_type: "announcement", ...query, },
+                        ],
+                    },
+                ],
+            }
+        };
+
+        if (!common.isEmpty(group_type) && group_type !== "undefined" && group_type !== "announcement") {
+            query.group_type = group_type;
+            query.participants = { "$elemMatch": { "user_id": user._id, } };
+        };
+        if (!common.isEmpty(group_type) && group_type !== "undefined" && group_type === "announcement") {
+            query.group_type = group_type;
+            query.participants = { "$elemMatch": { "user_id": user._id, "admin": true } }
+        };
+
+        // console.log('query',query);
 
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([
             {
-                $match: {
-                    $and: [
-                        {
-                            $or: [
-                                {
-                                    "participants.user_id": { $in: [user._id] },
-                                    group_type: { $in: ["one-to-one", "group",] },
-                                    ...query,
-                                },
-                                // { admin: user._id, group_type: "announcement" , ...query,},
-                                { "participants": { "$elemMatch": { "user_id": user._id, "admin": true } }, group_type: "announcement", ...query, },
-                            ],
-                        },
-                    ],
-                },
+                $match: group_type ? query : matchCondition
             },
             {
                 $unwind: "$participants",
@@ -167,8 +188,7 @@ exports.getAllTypeChatChannels = async ({
 
         if (searchTextName) {
             matchConditions.participant_name = { $elemMatch: { $regex: searchTextName, $options: 'i' } };
-        }
-
+        };
 
         const channelsWithUsers = await ChannelListSchemaModel.aggregate([
             {

@@ -3,7 +3,7 @@ const chatModel = require('../models/chatModel');
 
 exports.getChatChannelsByEmailAndIndexType = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        let users = await chatModel.getChatChannelsByEmailAndIndexType({email:req.query.email, chat_index_status:req.query.chat_index_status,searchTextName:req.query.searchTextName,filter:req.query.filter});
+        let users = await chatModel.getChatChannelsByEmailAndIndexType({email:req.query.email, chat_index_status:req.query.chat_index_status,searchTextName:req.query.searchTextName,filter:req.query.filter, group_type:req.query.group_type,});
         res.json(users);
     } catch (err) {
         next(err);

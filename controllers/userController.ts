@@ -20,7 +20,6 @@ exports.getUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 exports.communicatorUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("object",{country:req.query.country,email:req.query.email,name:req.query.name});
         let users = await userModel.communicatorUsers({country:req.query.country,email:req.query.email,name:req.query.name});
         res.json(users);
     } catch (err) {

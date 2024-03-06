@@ -11,16 +11,12 @@ interface MessageModel {
 
 exports.createMessage = async ({ message }: MessageModel) => {
     try {
-
-        console.log("message",message);
-
         let response = await MessageSchemaModel.create(message);
 
         // this is for announcement msg type and channel
         if (message.channel_type==="announcement"){
             
             await Promise.all(message?.receivers?.map(async (receiver)=>{
-                console.log("`chat_${message?.sender?._id}_${receiver._id}`",`chat_${message?.sender?.email}_${receiver.email}`);
                 const update = {
                     $set: {
                         last_msg:message.message,
@@ -42,7 +38,6 @@ exports.createMessage = async ({ message }: MessageModel) => {
                 update, // Update operations
                 options // Options
                 );
-                console.log("channel",channel);
                 let subMessage = {
                     channel: channel?.channel,
                     channel_type: message?.channel_type,
@@ -53,9 +48,7 @@ exports.createMessage = async ({ message }: MessageModel) => {
                     sender: message.sender,
                     receivers: [ { _id: receiver?._id, email:receiver.email, read_at: receiver?.read_at, reaction: receiver?.reaction } ]
                 };
-                console.log("subMessage",subMessage);
                 let subResponse = await MessageSchemaModel.create(subMessage);
-
             }))
             
         }
@@ -151,8 +144,6 @@ exports.getMessages = async ({ channel_name }: MessageModel) => {
                 $sort: { createdAt: 1 } // Sort by createdAt in ASC order
             },
         ]);
-
-        console.log(messages);
 
         return { status: 201, success: true, data: messages };
     } catch (err) {

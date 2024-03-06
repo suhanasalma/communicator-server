@@ -12,7 +12,6 @@ exports.createMessage = async (req: Request, res: Response, next: NextFunction) 
 };
 exports.getMessages = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("req.query getMessages", req.query);
         let message = await messageModel.getMessages({ channel_name: req.query.channel_name });
         res.json(message);
     } catch (err) {
